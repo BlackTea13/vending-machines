@@ -1,9 +1,10 @@
-from sqlalchemy import Column, ForeignKey, Integer, Text, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from app import db
+from app.extensions import Base, Engine, Session
 
-class Vending_machine(db.Model):
-    
+Base.metadata.create_all(Engine)
+
+class Vending_Machine(Base):
     __tablename__ = 'vending_machines'
     machine_id = Column(Integer, primary_key = True, autoincrement=True)
     location = Column(String(1000))
