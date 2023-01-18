@@ -1,17 +1,17 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, MetaData
 from sqlalchemy.orm import relationship
-from app.extensions import Base, Engine, Session
+from app.extensions import Base, Engine, Session, db
 from flask import jsonify
 from dataclasses import dataclass
+from typing import List
 
-@dataclass
 class Vending_Machine(Base):
     machine_id : int
     location : str
     
     __tablename__ = 'vending_machines'
-    machine_id = Column(Integer, primary_key = True, autoincrement=True)
-    location = Column(String(1000))
+    machine_id = db.Column(Integer, primary_key=True, autoincrement=True)
+    location = db.Column(String(1000))
     
     children = relationship("Machine_Stock")
     
@@ -19,5 +19,6 @@ class Vending_Machine(Base):
         self.location = location
         
     @staticmethod
-    def find_machine_by_id(id: int):
+    def create_machine_by_id(id: int):
         pass
+    

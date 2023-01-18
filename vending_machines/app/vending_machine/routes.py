@@ -13,3 +13,7 @@ def get_vending_machine(id):
     a = jsonify(m1)
     print(a)
     return "you just accessed a vending machine route :)"
+
+@bp.route('/vending-machine/create/', methods=['GET'])
+def create_vending_machine(id, location):
+    request.args.get
