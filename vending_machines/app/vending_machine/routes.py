@@ -27,7 +27,7 @@ def get_vending_machine():
             machine = Session().query(Vending_Machine).filter(
                 Vending_Machine.location == machine_location).first()
 
-        if 'machine_id' in request.args:
+        elif 'machine_id' in request.args:
             machine_id = request.args.get('machine_id')
             machine = Session().query(Vending_Machine).filter(
                 Vending_Machine.machine_id == machine_id).first()
