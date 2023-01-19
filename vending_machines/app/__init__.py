@@ -26,6 +26,7 @@ def insert_sample_data():
     ms1 = Machine_Stock(1, 1, 50)
     ms2 = Machine_Stock(2, 3, 1)
     ms3 = Machine_Stock(3, 2, 2000)
+    ms4 = Machine_Stock(1, 2, 2)
 
     session = Session()
     session.add(m1)
@@ -39,6 +40,7 @@ def insert_sample_data():
     session.add(ms1)
     session.add(ms2)
     session.add(ms3)
+    session.add(ms4)
     session.commit()
 
 
@@ -49,9 +51,13 @@ def create_app(config_class=Config):
     # Initialize Flask extensions here
     db.init_app(app)
 
+    # Drop and create tables to put in the database server
     app.app_context().push()
     Base.metadata.drop_all(Engine)
     Base.metadata.create_all(Engine)
+
+    # Sample data to add in for testing
+    # Comment out the line below for production
     insert_sample_data()
 
     # Register blueprints here
