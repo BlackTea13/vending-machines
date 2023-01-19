@@ -45,3 +45,22 @@ def create_product():
     session.add(new_product)
     session.commit()
     return redirect(url_for('.get_product', product_id=new_product.product_id))
+
+@bp.route('/product/delete', methods=['POST'])
+def delete_product():
+    form = request.form
+    if 'product_id' not in form:
+        return 'product_id not in body', RESPONSE_CODE_BAD_REQUEST
+    
+    
+    product_id = form.get('product_id')
+    session = Session()
+    product = session.query(Product).filter(
+        Product.product_id == product_id).first()
+    if product == None:
+        return f'product with machine_id {product_id} does not exist...', RESPONSE_CODE_BAD_REQUEST
+
+    session.delete(product)
+    session.commit()
+    session.close()
+    return redirect(url_for(".get_all_products"))

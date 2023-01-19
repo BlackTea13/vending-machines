@@ -19,7 +19,7 @@ class Product(Base):
     price = Column(Float)
 
     parents: machine_stock.Machine_Stock = relationship(
-        "Machine_Stock", back_populates="child")
+        "Machine_Stock", back_populates="child", cascade="all,delete")
 
     def __init__(self, product_name, price):
         self.product_name = product_name
