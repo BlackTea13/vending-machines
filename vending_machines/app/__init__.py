@@ -12,6 +12,7 @@ sys.path.append('../')
 def drop_tables():
     session = Session()
     Base.metadata.drop_all()
+    session.close()
 
 
 def insert_sample_data():
@@ -72,6 +73,10 @@ def create_app(config_class=Config):
 
     from app.product import bp as product_bp
     app.register_blueprint(product_bp)
+
+    @app.route('/')
+    def index():
+        return "welcome to the API! :)"
 
     print('DEBUG: app starting')
     return app
