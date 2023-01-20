@@ -21,12 +21,12 @@ class Product(Base):
     parents: machine_stock.Machine_Stock = relationship(
         "Machine_Stock", back_populates="child", cascade="all,delete")
 
-    def __init__(self, product_name, price):
+    def __init__(self, product_name: str, price: float):
         self.product_name = product_name
         self.price = price
 
     @staticmethod
-    def get_product_by_id(id: int, products: List[Product]) -> Product:
+    def get_product_by_id(id: int, products: List[Product]) -> Product | None:
         for product in products:
             if product.product_id == id:
                 return product

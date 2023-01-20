@@ -25,10 +25,7 @@ class Machine_Stock(Base):
     parent: vending_machine.Vending_Machine = relationship(
         "Vending_Machine", back_populates="children", foreign_keys=[machine_id])
 
-    def __init__(self, machine_id, product_id, quantity):
+    def __init__(self, machine_id: int, product_id: int, quantity: int):
         self.quantity = quantity
         self.machine_id = machine_id
         self.product_id = product_id
-
-    def do_something():
-        return None

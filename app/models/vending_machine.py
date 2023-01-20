@@ -20,11 +20,12 @@ class Vending_Machine(Base):
     children: List[machine_stock.Machine_Stock] = relationship(
         "Machine_Stock", back_populates="parent", cascade="all,delete")
 
-    def __init__(self, location):
+    def __init__(self, location: str):
         self.location = location
 
     @staticmethod
-    def get_product_id_in_object(vending_machine: Vending_Machine, machine_stocks: List[machine_stock.Machine_Stock]) -> dict:
+    def get_product_id_in_object(vending_machine: Vending_Machine,
+                                 machine_stocks: List[machine_stock.Machine_Stock]) -> List[int]:
         machine_id = vending_machine.machine_id
         product_ids = [
             listing.product_id for listing in machine_stocks if machine_id == listing.machine_id]
@@ -32,16 +33,11 @@ class Vending_Machine(Base):
 
     @staticmethod
     def object_to_dictionary(vending_machine: Vending_Machine):
-        machine_dictionary = {}
-        machine_dictionary['machine_id'] = vending_machine.machine_id
-        machine_dictionary['location'] = vending_machine.location
+        machine_dictionary = {'machine_id': vending_machine.machine_id, 'location': vending_machine.location}
         product_list = []
         for listing in vending_machine.children:
-            product_dictionary = {}
-            product_dictionary['product_id'] = listing.child.product_id
-            product_dictionary['product_name'] = listing.child.product_name
-            product_dictionary['price'] = listing.child.price
-            product_dictionary['quantity'] = listing.quantity
+            product_dictionary = {'product_id': listing.child.product_id, 'product_name': listing.child.product_name,
+                                  'price': listing.child.price, 'quantity': listing.quantity}
             product_list.append(product_dictionary)
         machine_dictionary['products'] = product_list
         return machine_dictionary
@@ -51,9 +47,7 @@ class Vending_Machine(Base):
     def objects_to_dictionary(vending_machine: List[Vending_Machine], machine_stock: List[machine_stock.Machine_Stock], products: List[product.Product]) -> List[dict]:
         list_of_dictionary = []
         for machine in vending_machine:
-            out_dictionary = {}
-            out_dictionary['machine_id'] = machine.machine_id
-            out_dictionary['location'] = machine.location
+            out_dictionary = {'machine_id': machine.machine_id, 'location': machine.location}
 
             from app.models.product import Product
             product_list = []
