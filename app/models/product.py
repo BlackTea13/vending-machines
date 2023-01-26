@@ -18,8 +18,8 @@ class Product(Base):
     product_name = Column(String(1000))
     price = Column(Float)
 
-    parents: machine_stock.Machine_Stock = relationship(
-        "Machine_Stock", back_populates="child", cascade="all,delete")
+    parents: machine_stock.MachineStock = relationship(
+        "MachineStock", back_populates="child", cascade="all,delete")
 
     def __init__(self, product_name: str, price: float):
         self.product_name = product_name

@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app.extensions import db, Base, Engine, Session
-from app.models.vending_machine import Vending_Machine
+from app.models.vending_machine import VendingMachine
 from app.models.product import Product
-from app.models.machine_stock import Machine_Stock
+from app.models.machine_stock import MachineStock
 from config import Config
 import sys
 sys.path.append('../')
@@ -16,18 +16,18 @@ def drop_tables():
 
 
 def insert_sample_data():
-    m1 = Vending_Machine('front of school')
-    m2 = Vending_Machine('back of school')
-    m3 = Vending_Machine('my house')
+    m1 = VendingMachine('front of school')
+    m2 = VendingMachine('back of school')
+    m3 = VendingMachine('my house')
 
     p1 = Product('coke', 20)
     p2 = Product('taro', 15)
     p3 = Product('chocolate', 50)
 
-    ms1 = Machine_Stock(1, 1, 50)
-    ms2 = Machine_Stock(2, 3, 1)
-    ms3 = Machine_Stock(3, 2, 2000)
-    ms4 = Machine_Stock(1, 2, 2)
+    ms1 = MachineStock(1, 1, 50)
+    ms2 = MachineStock(2, 3, 1)
+    ms3 = MachineStock(3, 2, 2000)
+    ms4 = MachineStock(1, 2, 2)
 
     session = Session()
     session.add(m1)

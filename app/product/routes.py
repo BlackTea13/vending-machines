@@ -1,7 +1,7 @@
 from flask import request, redirect, url_for, jsonify, Response
 from app.extensions import db, Session
-from app.models.vending_machine import Vending_Machine
-from app.models.machine_stock import Machine_Stock
+from app.models.vending_machine import VendingMachine
+from app.models.machine_stock import MachineStock
 from app.models.product import Product
 from app.product import bp
 

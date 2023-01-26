@@ -17,22 +17,22 @@ class VendingMachine(Base):
     machine_id = Column(Integer, primary_key=True,
                         autoincrement=True)
     location = Column(String(1000))
-    children: List[machine_stock.Machine_Stock] = relationship(
-        "Machine_Stock", back_populates="parent", cascade="all,delete")
+    children: List[machine_stock.MachineStock] = relationship(
+        "MachineStock", back_populates="parent", cascade="all,delete")
 
     def __init__(self, location: str):
         self.location = location
 
     @staticmethod
-    def get_product_id_in_object(vending_machine: Vending_Machine,
-                                 machine_stocks: List[machine_stock.Machine_Stock]) -> List[int]:
+    def get_product_id_in_object(vending_machine: VendingMachine,
+                                 machine_stocks: List[machine_stock.MachineStock]) -> List[int]:
         machine_id = vending_machine.machine_id
         product_ids = [
             listing.product_id for listing in machine_stocks if machine_id == listing.machine_id]
         return product_ids
 
     @staticmethod
-    def object_to_dictionary(vending_machine: Vending_Machine):
+    def object_to_dictionary(vending_machine: VendingMachine):
         machine_dictionary = {'machine_id': vending_machine.machine_id, 'location': vending_machine.location}
         product_list = []
         for listing in vending_machine.children:
@@ -44,7 +44,7 @@ class VendingMachine(Base):
 
     # super cool method that was a waste of time
     @staticmethod
-    def objects_to_dictionary(vending_machine: List[Vending_Machine], machine_stock: List[machine_stock.Machine_Stock], products: List[product.Product]) -> List[dict]:
+    def objects_to_dictionary(vending_machine: List[VendingMachine], machine_stock: List[machine_stock.MachineStock], products: List[product.Product]) -> List[dict]:
         list_of_dictionary = []
         for machine in vending_machine:
             out_dictionary = {'machine_id': machine.machine_id, 'location': machine.location}
