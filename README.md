@@ -13,7 +13,8 @@
    5. `models` : directory containing the classes for each object
 
 ### Database Connection
-Waiting to learn to put database in docker using docker compose...
+Waiting to learn to put database in docker using docker compose... <br>
+For now you should have a MySql server on your local machine on port 3306.
 
 ### Requirements
 Will make `requirements.yaml` soon...
