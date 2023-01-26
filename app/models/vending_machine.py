@@ -44,7 +44,8 @@ class VendingMachine(Base):
 
     # super cool method that was a waste of time
     @staticmethod
-    def objects_to_dictionary(vending_machine: List[VendingMachine], machine_stock: List[machine_stock.MachineStock], products: List[product.Product]) -> List[Dict]:
+    def objects_to_dictionary(vending_machine: List[VendingMachine], machine_stock: List[machine_stock.MachineStock],
+                              products: List[product.Product]) -> List[Dict]:
         list_of_dictionary = []
         for machine in vending_machine:
             out_dictionary = {'machine_id': machine.machine_id, 'location': machine.location}

@@ -28,7 +28,7 @@ def get_product() -> Dict | Tuple[Dict, int]:
         product = Session().query(Product).filter(Product.product_name == product_name).first()
 
     if product is None:
-        return {"message" : "product does not exist..."}, RESPONSE_CODE_BAD_REQUEST
+        return {"message": "product does not exist..."}, RESPONSE_CODE_BAD_REQUEST
 
     return Product.object_to_dictionary(product)
 
@@ -53,7 +53,7 @@ def create_product() -> redirect:
 def delete_product() -> redirect | Tuple[Dict, int]:
     form = request.form
     if 'product_id' not in form:
-        return {'message' : 'product_id not in body'}, RESPONSE_CODE_BAD_REQUEST
+        return {'message': 'product_id not in body'}, RESPONSE_CODE_BAD_REQUEST
 
     product_id = form.get('product_id')
     session = Session()

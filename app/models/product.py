@@ -31,12 +31,11 @@ class Product(Base):
             if product.product_id == id:
                 return product
         return None
-    
+
     @staticmethod
     def object_to_dictionary(product: Product) -> dict:
         return {
-            'product_id' : product.product_id,
-            'product_name' : product.product_name,
-            'price' : product.price
+            'product_id': product.product_id,
+            'product_name': product.product_name,
+            'price': product.price
         }
-        

@@ -88,14 +88,15 @@ def add_product_to_machine() -> Tuple[Dict, int] | redirect:
         Product.product_id == product_id).first()
 
     if product is None:
-        return {'message' : f'product with id {product_id} does not exist in database...'}, RESPONSE_CODE_BAD_REQUEST
+        return {'message': f'product with id {product_id} does not exist in database...'}, RESPONSE_CODE_BAD_REQUEST
 
     machine_id = form.get('machine_id')
     machine = session.query(VendingMachine).filter(
         VendingMachine.machine_id == machine_id).first()
 
     if machine is None:
-        return {'message' : f'vending machine with id {machine_id} does not exist in database...'}, RESPONSE_CODE_BAD_REQUEST
+        return {
+            'message': f'vending machine with id {machine_id} does not exist in database...'}, RESPONSE_CODE_BAD_REQUEST
 
     listing = MachineStock(machine_id=int(machine_id), product_id=int(product_id), quantity=int(quantity))
     session.add(listing)

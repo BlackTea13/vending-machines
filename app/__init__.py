@@ -5,6 +5,7 @@ from app.models.product import Product
 from app.models.machine_stock import MachineStock
 from config import Config
 import sys
+
 sys.path.append('../')
 
 
