@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import relationship
-from app.extensions import Base, Engine, Session, db
+from app.extensions import Base
 from dataclasses import dataclass
 from app.models import machine_stock
 from typing import List
@@ -33,7 +33,7 @@ class Product(Base):
         return None
     
     @staticmethod
-    def object_to_dictionary(product: Product):
+    def object_to_dictionary(product: Product) -> dict:
         return {
             'product_id' : product.product_id,
             'product_name' : product.product_name,

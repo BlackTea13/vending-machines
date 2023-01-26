@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from app.extensions import Base, Engine, Session, db
+from app.extensions import Base
 from app.models import vending_machine
 from app.models import product
 from dataclasses import dataclass

@@ -1,9 +1,9 @@
 from __future__ import annotations
-from sqlalchemy import Column, Integer, String, MetaData
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from app.extensions import Base, Engine, Session, db
+from app.extensions import Base
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 from app.models import machine_stock
 from app.models import product
 
@@ -32,7 +32,7 @@ class VendingMachine(Base):
         return product_ids
 
     @staticmethod
-    def object_to_dictionary(vending_machine: VendingMachine):
+    def object_to_dictionary(vending_machine: VendingMachine) -> Dict:
         machine_dictionary = {'machine_id': vending_machine.machine_id, 'location': vending_machine.location}
         product_list = []
         for listing in vending_machine.children:
@@ -44,7 +44,7 @@ class VendingMachine(Base):
 
     # super cool method that was a waste of time
     @staticmethod
-    def objects_to_dictionary(vending_machine: List[VendingMachine], machine_stock: List[machine_stock.MachineStock], products: List[product.Product]) -> List[dict]:
+    def objects_to_dictionary(vending_machine: List[VendingMachine], machine_stock: List[machine_stock.MachineStock], products: List[product.Product]) -> List[Dict]:
         list_of_dictionary = []
         for machine in vending_machine:
             out_dictionary = {'machine_id': machine.machine_id, 'location': machine.location}

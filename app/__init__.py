@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from app.extensions import db, Base, Engine, Session
 from app.models.vending_machine import VendingMachine
 from app.models.product import Product
