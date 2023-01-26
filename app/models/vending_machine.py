@@ -9,7 +9,7 @@ from app.models import product
 
 
 @dataclass
-class Vending_Machine(Base):
+class VendingMachine(Base):
     machine_id: int
     location: str
 

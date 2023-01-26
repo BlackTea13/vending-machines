@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Machine_Stock(Base):
+class MachineStock(Base):
     machine_id: int
     product_id: int
     quantity: int
