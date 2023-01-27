@@ -1,7 +1,7 @@
 from __future__ import annotations
 from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import relationship
-from app.extensions import Base, Engine, Session, db
+from app.extensions import Base
 from dataclasses import dataclass
 from app.models import machine_stock
 from typing import List
@@ -18,8 +18,8 @@ class Product(Base):
     product_name = Column(String(1000))
     price = Column(Float)
 
-    parents: machine_stock.Machine_Stock = relationship(
-        "Machine_Stock", back_populates="child", cascade="all,delete")
+    parents: machine_stock.MachineStock = relationship(
+        "MachineStock", back_populates="child", cascade="all,delete")
 
     def __init__(self, product_name: str, price: float):
         self.product_name = product_name
@@ -31,12 +31,11 @@ class Product(Base):
             if product.product_id == id:
                 return product
         return None
-    
+
     @staticmethod
-    def object_to_dictionary(product: Product):
+    def object_to_dictionary(product: Product) -> dict:
         return {
-            'product_id' : product.product_id,
-            'product_name' : product.product_name,
-            'price' : product.price
+            'product_id': product.product_id,
+            'product_name': product.product_name,
+            'price': product.price
         }
-        

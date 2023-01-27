@@ -1,23 +1,91 @@
-# Vending Machine Tracker API #
+# Vending Machine Tracker API 
+### Project Structure
 
 ---
 
-### Project Structure
-1. `config.py` : contains the database URI for database connection
-2. `app` :
-   1. `main` : main directory, nothing of importance in here
-   2. `machine_stock`: directory containing the routes for the relationship 
-   between vending machine and product
-   3. `vending_machine` : directory containing the routes for the vending machines
-   4. `product` : directory containing the routes for the products
-   5. `models` : directory containing the classes for each object
+```
+.
+├── README.md
+├── app
+│   ├── extensions.py
+│   ├── machine_stock
+│   ├── main
+│   │   └── routes.py           
+│   ├── models
+│   │   ├── machine_stock.py
+│   │   ├── product.py
+│   │   └── vending_machine.py
+│   ├── product
+│   │   └── routes.py
+│   └── vending_machine
+│       └── routes.py
+├── config.py
+└── tests
+```
+### Requirements
+
+---
+
+Make sure to have the required packages to run the program by doing 
+```
+pip install -r requirements.txt
+```
+
+The project was written in python 3.10 in case any unexpected bugs pop up.
+
 
 ### Database Connection
-Waiting to learn to put database in docker using docker compose... <br>
-For now you should have a MySql server on your local machine on port 3306.
 
-### Requirements
-Will make `requirements.yaml` soon...
+---
+
+Waiting to learn to put database in docker using docker compose... <br>
+For now you should have a MySQL server on your local machine on port 3306 with a
+schema called "vending_machines" if you want things to run smoothly.
+
+### API Sheet
+
+---
+
+#### Vending Machine 
+View all vending machines 
+```
+GET /vending-machine/all/
+```
+View a vending machine, have either `machine_id` or `location` in the request
+arguments
+```
+GET /vending-machine/
+```
+Create a vending machine, have `location` in the form
+```
+POST /vending-machine/create/
+```
+Delete a vending machine, have `machine_id` to be deleted in the form
+```
+POST /vending-machine/delete/
+```
+Add a product to a machine, have `machine_id`, `product_id`, and `quantity` in the form
+```
+POST /vending-machine/add-product/
+```
+
+#### Product
+View all products
+```
+GET /product/all/
+```
+View product with `product_id` in arguments
+```
+GET /product/
+```
+Create product with `product_name` and `price` in form
+```
+POST /product/create/
+```
+Delete a product with `product_id` in form
+```
+POST /product/delete/
+```
 
 
 

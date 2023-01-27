@@ -1,14 +1,14 @@
 from __future__ import annotations
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from app.extensions import Base, Engine, Session, db
+from app.extensions import Base
 from app.models import vending_machine
 from app.models import product
 from dataclasses import dataclass
 
 
 @dataclass
-class Machine_Stock(Base):
+class MachineStock(Base):
     machine_id: int
     product_id: int
     quantity: int
@@ -22,8 +22,8 @@ class Machine_Stock(Base):
 
     child: product.Product = relationship("Product", back_populates="parents",
                                           foreign_keys=[product_id])
-    parent: vending_machine.Vending_Machine = relationship(
-        "Vending_Machine", back_populates="children", foreign_keys=[machine_id])
+    parent: vending_machine.VendingMachine = relationship(
+        "VendingMachine", back_populates="children", foreign_keys=[machine_id])
 
     def __init__(self, machine_id: int, product_id: int, quantity: int):
         self.quantity = quantity
