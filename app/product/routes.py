@@ -9,7 +9,6 @@ from http import HTTPStatus
 @bp.route('/product/all', methods=['GET'])
 def get_all_products() -> Response:
     with Session() as session:
-        Response(status=HTTPStatus.NON_AUTHORITATIVE_INFORMATION)
         return jsonify(Product.get_all_products(session))
 
 
@@ -44,6 +43,23 @@ def create_product() -> Response | Tuple[Response, int]:
         session.add(new_product)
         session.commit()
     return jsonify(new_product), 203
+
+
+@bp.route('/product/edit', methods=['POST'])
+def edit_product() -> Response:
+    form = request.form
+    if 'product_id' not in form.keys():
+        return Response(response='product_id not in request body', status=HTTPStatus.BAD_REQUEST)
+    with Session() as session:
+        price = form.get('price') if 'price' in form.keys() else None
+        product_name = form.get('product_name') if 'product_name' in form.keys() else None
+        product_to_edit = Product.get_product_by_id(session, form.get('product_id'))
+        if product_to_edit is None:
+            return Response(response='product does not exist', status=HTTPStatus.BAD_REQUEST)
+        result = product_to_edit.edit(session=session, product_name=product_name, price=price)
+    if result.item is None:
+        return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    return jsonify(result.item)
 
 
 @bp.route('/product/delete', methods=['POST'])
