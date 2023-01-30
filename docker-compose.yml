@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  vending-machines-mysql:
+    image: mysql:latest
+    container_name: vending-machines
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=vending-pw
+      - MYSQL_DATABASE=vending_machines
+    ports:
+      - "13306:3306"
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
