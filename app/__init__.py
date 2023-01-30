@@ -23,6 +23,8 @@ def insert_sample_data():
     p1 = Product('coke', 20)
     p2 = Product('taro', 15)
     p3 = Product('chocolate', 50)
+    p4 = Product('robert', 55.80)
+    p5 = Product('nail clippers', 800.12345678)
 
     ms1 = MachineStock(1, 1, 50)
     ms2 = MachineStock(2, 3, 1)
@@ -36,6 +38,8 @@ def insert_sample_data():
     session.add(p1)
     session.add(p2)
     session.add(p3)
+    session.add(p4)
+    session.add(p5)
     session.commit()
 
     session.add(ms1)
