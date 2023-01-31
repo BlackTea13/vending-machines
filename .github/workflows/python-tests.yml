@@ -56,7 +56,7 @@ jobs:
           flake8 . --count --ignore=ANN101,E501 --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   test-and-coverage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
