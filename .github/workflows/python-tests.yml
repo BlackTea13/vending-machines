@@ -71,11 +71,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: build docker container
-        uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: "./docker-compose.yml"
-
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v2
         with:
@@ -99,7 +94,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.poetry-cache.outputs.cache-hit != 'true'
-        run: poetry install
+        run: poetry install --no-root
 
       - name: Test with Pytest
         run: |
