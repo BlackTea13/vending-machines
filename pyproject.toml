@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "vending-machines"
+version = "0.1.0"
+description = ""
+authors = ["BlackTea13 <robertblum2001@gmail.com>"]
+readme = "README.md"
+packages = [{include = "vending_machines"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.2.2"
+flask-sqlalchemy = "^3.0.3"
+SQLAlchemy = "^1.4.0"
+PyMySQL = "^1.0.2"
+mysqlclient = "^2.1.1"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.0.2"
+flake8 = "^5.0.1"
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
+flake8-annotations = "^2.9.1"
+flake8-eradicate = "^1.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
