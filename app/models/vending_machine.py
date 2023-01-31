@@ -1,10 +1,11 @@
 from __future__ import annotations
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from app.extensions import Base
+from sqlalchemy.orm import relationship, Session
+from app.extensions import Base, Session
 from dataclasses import dataclass
-from typing import List, Dict
-from app.models import machine_stock
+from typing import List, Dict, Optional
+from app.models.machine_stock import MachineStock
+from app.utils.result import Result
 from app.models import product
 
 
@@ -12,57 +13,33 @@ from app.models import product
 class VendingMachine(Base):
     machine_id: int
     location: str
+    machine_products: List[MachineStock]
 
     __tablename__ = 'vending_machines'
     machine_id = Column(Integer, primary_key=True,
                         autoincrement=True)
-    location = Column(String(1000))
-    children: List[machine_stock.MachineStock] = relationship(
-        "MachineStock", back_populates="parent", cascade="all,delete")
+    location = Column(String(100))
+    products = relationship("MachineStock", backref="vending_machine", cascade="all,delete", lazy=True)
 
-    def __init__(self, location: str):
-        self.location = location
+    @property
+    def machine_products(self) -> List[MachineStock]:
+        machines = Session().query(MachineStock).filter_by(machine_id=self.machine_id).all()
+        return [machine.to_dict() for machine in machines]
+
+    @staticmethod
+    def get_all_vending_machines(session: Session) -> Optional[List[VendingMachine]]:
+        return session.query(VendingMachine).all()
+
+    @staticmethod
+    def create(session: Session, location: str) -> Result:
+        new_machine = VendingMachine(location=location)
+        return Result.success("vending machine created", new_machine)
 
     @staticmethod
     def get_product_id_in_object(vending_machine: VendingMachine,
-                                 machine_stocks: List[machine_stock.MachineStock]) -> List[int]:
+                                 machine_stocks: List[MachineStock]) -> List[int]:
         machine_id = vending_machine.machine_id
         product_ids = [
             listing.product_id for listing in machine_stocks if machine_id == listing.machine_id]
         return product_ids
 
-    @staticmethod
-    def object_to_dictionary(vending_machine: VendingMachine) -> Dict:
-        machine_dictionary = {'machine_id': vending_machine.machine_id, 'location': vending_machine.location}
-        product_list = []
-        for listing in vending_machine.children:
-            product_dictionary = {'product_id': listing.child.product_id, 'product_name': listing.child.product_name,
-                                  'price': listing.child.price, 'quantity': listing.quantity}
-            product_list.append(product_dictionary)
-        machine_dictionary['products'] = product_list
-        return machine_dictionary
-
-    # super cool method that was a waste of time
-    @staticmethod
-    def objects_to_dictionary(vending_machine: List[VendingMachine], machine_stock: List[machine_stock.MachineStock],
-                              products: List[product.Product]) -> List[Dict]:
-        list_of_dictionary = []
-        for machine in vending_machine:
-            out_dictionary = {'machine_id': machine.machine_id, 'location': machine.location}
-
-            from app.models.product import Product
-            product_list = []
-            for listing in machine_stock:
-                product_dictionary = {}
-                if listing.machine_id == machine.machine_id:
-                    product = Product.get_product_by_id(
-                        listing.product_id, products)
-                    product_dictionary['product_id'] = listing.product_id
-                    product_dictionary['product_name'] = product.product_name
-                    product_dictionary['price'] = product.price
-                    product_dictionary['quantity'] = listing.quantity
-                    product_list.append(product_dictionary)
-
-            out_dictionary['products'] = product_list
-            list_of_dictionary.append(out_dictionary)
-        return list_of_dictionary

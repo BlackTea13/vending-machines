@@ -18,12 +18,7 @@ class Product(Base):
     product_name = Column(String(100), unique=True, nullable=False)
     price = Column(DECIMAL(precision=10, scale=2), nullable=False)
 
-    parents = relationship(
-        "MachineStock", back_populates="child", cascade="all,delete")
-
-    def __init__(self, product_name: str, price: float):
-        self.product_name = product_name
-        self.price = price
+    machine_products = relationship("MachineStock", backref="product", cascade="all,delete", lazy=True)
 
     @staticmethod
     def has_product_by_id(session: Session, product_id: int) -> bool:

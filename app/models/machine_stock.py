@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from app.extensions import Base
 from app.models import vending_machine
-from app.models import product
+from app.models.product import Product
 from dataclasses import dataclass
 
 
@@ -20,12 +20,13 @@ class MachineStock(Base):
         'products.product_id'), primary_key=True)
     quantity = Column(Integer)
 
-    child: product.Product = relationship("Product", back_populates="parents",
-                                          foreign_keys=[product_id])
-    parent: vending_machine.VendingMachine = relationship(
-        "VendingMachine", back_populates="children", foreign_keys=[machine_id])
+    product_info: Product = relationship("Product", foreign_keys=[product_id])
 
-    def __init__(self, machine_id: int, product_id: int, quantity: int):
-        self.quantity = quantity
-        self.machine_id = machine_id
-        self.product_id = product_id
+    def to_dict(self) -> dict:
+
+        return {
+            "product_id": self.product_id,
+            "product_name": self.product_info.product_name,
+            "product_price": self.product_info.price,
+            "quantity": self.quantity,
+        }
