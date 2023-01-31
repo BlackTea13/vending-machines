@@ -6,8 +6,8 @@ from marshmallow_dataclass import dataclass
 from sqlalchemy import Column, Integer, String, exists
 from sqlalchemy.orm import Session, relationship
 
+import app.models.machine_stock as machine_stock
 from app.extensions import Base
-from app.models.machine_stock import MachineStock
 from app.models.product import Product
 from app.utils.result import Result
 
@@ -16,7 +16,7 @@ from app.utils.result import Result
 class VendingMachine(Base):
     machine_id: int
     location: str
-    products: List[MachineStock]
+    products: List[machine_stock.MachineStock]
 
     __tablename__ = "vending_machines"
     machine_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -72,9 +72,14 @@ class VendingMachine(Base):
         product_to_add = Product.has_product_by_id(session, product_id)
         if product_to_add is False:
             return Result.fail("product does not exist")
-        if MachineStock.get_machine_stock(session, machine_id=self.machine_id, product_id=product_id) is not None:
+        if (
+            machine_stock.MachineStock.get_machine_stock(session, machine_id=self.machine_id, product_id=product_id)
+            is not None
+        ):
             return Result.fail("this listing already exists, consider adding to the quantity instead")
-        self.products.append(MachineStock(machine_id=self.machine_id, product_id=product_id, quantity=quantity))
+        self.products.append(
+            machine_stock.MachineStock(machine_id=self.machine_id, product_id=product_id, quantity=quantity)
+        )
         session.commit()
         return Result.success("product successfully added", self)
 
@@ -87,7 +92,7 @@ class VendingMachine(Base):
         if not Product.has_product_by_id(session, product_id):
             return Result.fail(f"product with product_id: {product_id} does not exist")
 
-        return MachineStock.delete(session, self.machine_id, product_id)
+        return machine_stock.MachineStock.delete(session, self.machine_id, product_id)
 
     def increase_product_quantity_by_id(self, session: Session, product_id: str, quantity: str) -> Result:
         try:
@@ -96,7 +101,9 @@ class VendingMachine(Base):
         except ValueError:
             return Result.fail("product_id or quantity invalid")
 
-        listing = MachineStock.get_machine_stock(session, machine_id=self.machine_id, product_id=product_id)
+        listing = machine_stock.MachineStock.get_machine_stock(
+            session, machine_id=self.machine_id, product_id=product_id
+        )
         if listing is None:
             return Result.fail("this product does not exist in the machine, consider adding it first")
         quantity_old = listing.quantity

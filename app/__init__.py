@@ -49,23 +49,10 @@ def create_app(config_class: Config = Config) -> Flask:
     # Initialize Flask extensions here
     db.init_app(app)
 
-    # Drop and create tables to put in the database server
-    app.app_context().push()
-    Base.metadata.drop_all(Engine)
-    Base.metadata.create_all(Engine)
-
-    # Sample data to add in for testing
-    # Comment out the line below for production
-    insert_sample_data()
-
     # Register blueprints here
     from app.main import bp as main_bp
 
     app.register_blueprint(main_bp)
-
-    from app.machine_stock import bp as machine_stock_bp
-
-    app.register_blueprint(machine_stock_bp)
 
     from app.vending_machine import bp as vending_machine_bp
 
@@ -74,6 +61,14 @@ def create_app(config_class: Config = Config) -> Flask:
     from app.product import bp as product_bp
 
     app.register_blueprint(product_bp)
+
+    # Drop and create tables to put in the database server
+    app.app_context().push()
+    Base.metadata.drop_all(Engine)
+    Base.metadata.create_all(Engine)
+
+    # Sample data to add in for testing
+    insert_sample_data()
 
     print("DEBUG: app starting")
     return app

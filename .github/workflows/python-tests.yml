@@ -62,8 +62,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: build docker container
-        run: |
-          docker-compose up -d
+        uses: isbang/compose-action@v1.4.1
+        with:
+          compose-file: "./docker-compose.yml"
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v2

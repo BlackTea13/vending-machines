@@ -6,8 +6,8 @@ from typing import Dict, Optional
 from sqlalchemy import Column, ForeignKey, Integer, exists
 from sqlalchemy.orm import Session, relationship
 
-import app.models.vending_machine as vending_machine
 from app.extensions import Base
+from app.models import vending_machine
 from app.models.product import Product
 from app.utils.result import Result
 
