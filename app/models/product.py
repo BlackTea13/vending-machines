@@ -18,7 +18,7 @@ class Product(Base):
     product_name = Column(String(100), unique=True, nullable=False)
     price = Column(DECIMAL(precision=10, scale=2), nullable=False)
 
-    machine_products = relationship("MachineStock", backref="product", cascade="all,delete", lazy=True)
+    machines = relationship("MachineStock", back_populates="product_info", cascade="all,delete", lazy=True)
 
     @staticmethod
     def has_product_by_id(session: Session, product_id: int) -> bool:

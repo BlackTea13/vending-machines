@@ -1,106 +1,105 @@
-from flask import request, redirect, url_for
+from flask import request, redirect, url_for, Response, jsonify
 from app.extensions import Session
 from app.models.vending_machine import VendingMachine
 from app.models.machine_stock import MachineStock
 from app.models.product import Product
 from app.vending_machine import bp
-from typing import Dict, List, Tuple
-
-RESPONSE_CODE_BAD_REQUEST = 400
-RESPONSE_CODE_CREATED = 201
+from app.utils.result import Result
+from typing import Dict, List, Tuple, Union
+from http import HTTPStatus
 
 
 @bp.route('/vending-machine/all', methods=['GET'])
-def get_all_vending_machines() -> List[Dict]:
-    vending_machines = Session().query(VendingMachine).all()
-    return [VendingMachine.object_to_dictionary(machine) for machine in vending_machines]
+def get_all_vending_machines() -> Response:
+    with Session() as session:
+        return jsonify(VendingMachine.get_all_vending_machines(session))
 
 
 @bp.route('/vending-machine/', methods=['GET'])
-def get_vending_machine() -> Tuple[Dict, int] | Dict:
-    if request.method == 'GET':
-        if 'location' not in request.args and 'machine_id' not in request.args:
-            return {'message': "location or machine_id information not in request"}, RESPONSE_CODE_BAD_REQUEST
-
-        machine = None
-        if 'location' in request.args:
-            machine_location = request.args.get('location')
-            machine = Session().query(VendingMachine).filter(
-                VendingMachine.location == machine_location).first()
-
-        elif 'machine_id' in request.args:
-            machine_id = request.args.get('machine_id')
-            machine = Session().query(VendingMachine).filter(
-                VendingMachine.machine_id == machine_id).first()
-
-        if machine is None:
-            return {'message': 'machine with location: {machine_location} does not exist...'}, RESPONSE_CODE_BAD_REQUEST
-        return VendingMachine.object_to_dictionary(machine)
+def get_vending_machine() -> Response:
+    if 'machine_id' not in request.args and 'location' not in request.args:
+        return Response(response="machine_id or location not in request arguments", status=HTTPStatus.BAD_REQUEST)
+    with Session() as session:
+        if 'machine_id' in request.args:
+            result = VendingMachine.get_vending_machine_by_id(session, request.args.get('machine_id'))
+        elif 'location' in request.args:
+            result = VendingMachine.get_vending_machine_by_location(session, request.args.get('location'))
+        if result is None:
+            return Response(response="machine does not exist", status=HTTPStatus.NOT_FOUND)
+        return jsonify(result)
 
 
 @bp.route('/vending-machine/create/', methods=['POST'])
-def create_vending_machine() -> redirect:
+def create_vending_machine() -> Response:
     form = request.form
     if 'location' not in form:
-        return 'location for vending machine not in request body...', RESPONSE_CODE_BAD_REQUEST
-
-    new_machine = VendingMachine(location=form['location'])
-
-    session = Session()
-    session.add(new_machine)
-    session.commit()
-    return redirect(url_for('.get_vending_machine', machine_id=new_machine.machine_id))
+        return Response(response='location for vending machine not in request body...',
+                        status=HTTPStatus.BAD_REQUEST)
+    with Session() as session:
+        result: Result = VendingMachine.create(session, form['location'])
+        if result is None:
+            return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+        session.add(result.item)
+        session.commit()
+    return Response(response='vending machine created', status=HTTPStatus.CREATED)
 
 
 @bp.route('/vending-machine/delete/', methods=['POST'])
-def delete_vending_machine() -> Tuple[Dict, int] | redirect:
+def delete_vending_machine() -> Union[Response, redirect]:
     form = request.form
     if 'machine_id' not in form:
-        return {'message': 'machine_id field not in form...'}, RESPONSE_CODE_BAD_REQUEST
+        return Response(response='machine_id field not in form...', status=HTTPStatus.BAD_REQUEST)
 
     machine_id = form.get('machine_id')
-    session = Session()
-    machine = session.query(VendingMachine).filter(
-        VendingMachine.machine_id == machine_id).first()
-    if machine is None:
-        return {'message': 'machine with machine_id {machine_id} does not exist...'}, RESPONSE_CODE_BAD_REQUEST
-
-    session.delete(machine)
-    session.commit()
-    session.close()
-    return redirect(url_for(".get_all_vending_machines"))
+    with Session() as session:
+        result = VendingMachine.delete_machine_by_id(session, machine_id)
+    if result.item is None:
+        return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    return Response(response=result.message, status=HTTPStatus.OK)
 
 
 @bp.route('/vending-machine/add-product/', methods=['POST'])
-def add_product_to_machine() -> Tuple[Dict, int] | redirect:
+def add_product_to_machine() -> Response:
     form = request.form
     if 'machine_id' not in form or not form.get('machine_id').isdecimal():
-        return {'message': 'machine_id field not in form...'}, RESPONSE_CODE_BAD_REQUEST
+        return Response(response='machine_id field not in form...', status=HTTPStatus.BAD_REQUEST)
     if 'product_id' not in form or not form.get('product_id').isdecimal():
-        return {'message': 'product_id field not in form...'}, RESPONSE_CODE_BAD_REQUEST
+        return Response(response='product_id field not in form...', status=HTTPStatus.BAD_REQUEST)
     if 'quantity' not in form or not form.get('quantity').isdecimal():
-        return {'message': 'quantity field not in form...'}, RESPONSE_CODE_BAD_REQUEST
-
-    quantity = form.get('quantity')
-    product_id = form.get('product_id')
-    session = Session()
-    product = session.query(Product).filter(
-        Product.product_id == product_id).first()
-
-    if product is None:
-        return {'message': f'product with id {product_id} does not exist in database...'}, RESPONSE_CODE_BAD_REQUEST
+        return Response(response='quantity field not in form...', status=HTTPStatus.BAD_REQUEST)
 
     machine_id = form.get('machine_id')
-    machine = session.query(VendingMachine).filter(
-        VendingMachine.machine_id == machine_id).first()
+    quantity = form.get('quantity')
+    product_id = form.get('product_id')
+    with Session() as session:
+        machine = VendingMachine.get_vending_machine_by_id(session, machine_id)
+        if machine is None:
+            return Response(response='machine not found', status=HTTPStatus.NOT_FOUND)
+        result = machine.add_product_by_id(session, product_id, quantity)
+    if result.item is None:
+        return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    return Response(response=result.message, status=HTTPStatus.OK)
 
-    if machine is None:
-        return {
-            'message': f'vending machine with id {machine_id} does not exist in database...'}, RESPONSE_CODE_BAD_REQUEST
 
-    listing = MachineStock(machine_id=int(machine_id), product_id=int(product_id), quantity=int(quantity))
-    session.add(listing)
-    session.commit()
-    session.close()
+@bp.route('/vending-machine/edit-product/', methods=['POST'])
+def edit_product_quantity_in_machine() -> Response:
+    form = request.form
+    if 'machine_id' not in form:
+        return Response(response='machine_id field not in form...', status=HTTPStatus.BAD_REQUEST)
+    if 'product_id' not in form:
+        return Response(response='product_id field not in form...', status=HTTPStatus.BAD_REQUEST)
+    if 'quantity' not in form:
+        return Response(response='quantity field not in form...', status=HTTPStatus.BAD_REQUEST)
 
-    return redirect(url_for('.get_vending_machine', machine_id=machine_id))
+    machine_id = form.get('machine_id')
+    quantity = form.get('quantity')
+    product_id = form.get('product_id')
+    with Session() as session:
+        machine = VendingMachine.get_vending_machine_by_id(session, machine_id)
+        if machine is None:
+            return Response(response='machine not found', status=HTTPStatus.NOT_FOUND)
+        result = machine.increase_product_quantity_by_id(session, product_id, quantity)
+    if result.item is None:
+        return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    return Response(response=result.message, status=HTTPStatus.OK)
+

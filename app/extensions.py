@@ -6,5 +6,5 @@ from config import Config
 
 db = SQLAlchemy()
 Engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True)
-Session = sessionmaker(bind=Engine)
+Session = sessionmaker(Engine)
 Base = declarative_base()

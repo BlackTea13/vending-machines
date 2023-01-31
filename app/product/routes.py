@@ -38,11 +38,9 @@ def create_product() -> Response | Tuple[Response, int]:
         result = Product.create(session, form.get('product_name'), form.get('price'))
         if result.item is None:
             return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
-        else:
-            new_product = result.item
-        session.add(new_product)
-        session.commit()
-    return jsonify(new_product), 203
+    session.add(result.item)
+    session.commit()
+    return jsonify(result.item), 203
 
 
 @bp.route('/product/edit', methods=['POST'])

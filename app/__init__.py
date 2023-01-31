@@ -16,37 +16,28 @@ def drop_tables():
 
 
 def insert_sample_data():
-    m1 = VendingMachine('front of school')
-    m2 = VendingMachine('back of school')
-    m3 = VendingMachine('my house')
+    with Session() as session:
+        session.add(VendingMachine.create(session, 'front of school').item)
+        session.add(VendingMachine.create(session, 'back of school').item)
+        session.add(VendingMachine.create(session, 'my house').item)
+        session.add(Product.create(session, 'coke', '20').item)
+        session.add(Product.create(session, 'taro', '15').item)
+        session.add(Product.create(session, 'chocolate', '50').item)
+        session.add(Product.create(session, 'robert', '55.80').item)
+        session.add(Product.create(session, 'nail clippers', '800.12345678').item)
+        session.commit()
 
-    p1 = Product('coke', 20)
-    p2 = Product('taro', 15)
-    p3 = Product('chocolate', 50)
-    p4 = Product('robert', 55.80)
-    p5 = Product('nail clippers', 800.12345678)
+        ms1 = MachineStock(machine_id=1, product_id=1, quantity=50)
+        ms2 = MachineStock(machine_id=2, product_id=3, quantity=1)
+        ms3 = MachineStock(machine_id=3, product_id=2, quantity=2000)
+        ms4 = MachineStock(machine_id=1, product_id=2, quantity=2)
+        session.commit()
 
-    ms1 = MachineStock(1, 1, 50)
-    ms2 = MachineStock(2, 3, 1)
-    ms3 = MachineStock(3, 2, 2000)
-    ms4 = MachineStock(1, 2, 2)
-
-    session = Session()
-    session.add(m1)
-    session.add(m2)
-    session.add(m3)
-    session.add(p1)
-    session.add(p2)
-    session.add(p3)
-    session.add(p4)
-    session.add(p5)
-    session.commit()
-
-    session.add(ms1)
-    session.add(ms2)
-    session.add(ms3)
-    session.add(ms4)
-    session.commit()
+        session.add(ms1)
+        session.add(ms2)
+        session.add(ms3)
+        session.add(ms4)
+        session.commit()
 
 
 def create_app(config_class=Config):
