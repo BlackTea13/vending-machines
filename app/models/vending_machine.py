@@ -9,7 +9,7 @@ from app.models.machine_stock import MachineStock
 from app.models.product import Product
 
 from app.utils.result import Result
-from typing import List, Dict
+from typing import List
 
 
 @dataclass

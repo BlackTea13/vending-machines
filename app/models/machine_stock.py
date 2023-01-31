@@ -5,7 +5,6 @@ from app.extensions import Base
 
 from app.models.product import Product
 
-from app.utils.result import Result
 from dataclasses import dataclass
 from typing import Optional
 from app.utils.result import Result

@@ -1,11 +1,9 @@
-from flask import request, redirect, url_for, Response, jsonify
+from flask import request, redirect, Response, jsonify
 from app.extensions import Session
 from app.models.vending_machine import VendingMachine
-from app.models.machine_stock import MachineStock
-from app.models.product import Product
 from app.vending_machine import bp
 from app.utils.result import Result
-from typing import Dict, List, Tuple, Union
+from typing import Union
 from http import HTTPStatus
 
 
