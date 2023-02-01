@@ -45,7 +45,7 @@ def create_product() -> Response | Tuple[Response, int]:
             return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
     session.add(result.item)
     session.commit()
-    return jsonify(result.item), 203
+    return jsonify(result.item), 201
 
 
 @bp.route("/product/edit", methods=["POST"])
