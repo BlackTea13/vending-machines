@@ -75,12 +75,12 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           poetry config virtualenvs.in-project true
 
-      - name: Set up Poetry cache
-        id: poetry-cache
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+#      - name: Set up Poetry cache
+#        id: poetry-cache
+#        uses: actions/cache@v2
+#        with:
+#          path: .venv
+#          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Create database
         run: docker run -p ${{ secrets.DOCKER_PORT }} --name vending_machines -e
