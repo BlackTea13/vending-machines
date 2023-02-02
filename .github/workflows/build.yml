@@ -108,7 +108,7 @@ jobs:
           retention-days: 7
 
   sonarqube:
-    #needs: test-and-coverage
+    needs: test-and-coverage
     runs-on: ubuntu-20.04
 
     steps:
