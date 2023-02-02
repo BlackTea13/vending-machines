@@ -3,7 +3,6 @@ import typing
 import pytest
 from flask import Flask
 from flask.testing import FlaskClient, FlaskCliRunner
-
 from app import create_app
 from config import Config
 
@@ -17,8 +16,6 @@ def app() -> typing.Generator:
             "SQLALCHEMY_DATABASE_URI": Config.SQLALCHEMY_DATABASE_URI,
         }
     )
-    ctx = app.app_context()
-    ctx.push()
     yield app
 
 
