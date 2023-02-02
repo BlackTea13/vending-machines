@@ -34,7 +34,7 @@ def get_product() -> Response:
 @bp.route("/product/create", methods=["POST"])
 def create_product() -> Response | Tuple[Response, int]:
     form = request.form
-    if "product_name" not in form.keys():
+    if "product_name" not in form:
         return Response(response="product_name not in request body", status=HTTPStatus.BAD_REQUEST)
     if "price" not in form.keys():
         return Response(response="product_id not in request body", status=HTTPStatus.BAD_REQUEST)
@@ -43,13 +43,13 @@ def create_product() -> Response | Tuple[Response, int]:
         result = Product.create(session, form.get("product_name"), form.get("price"))
         if result.item is None:
             return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
-    session.add(result.item)
-    session.commit()
-    return jsonify(result.item), 203
+        session.add(result.item)
+        session.commit()
+    return jsonify(result.item), 201
 
 
 @bp.route("/product/edit", methods=["POST"])
-def edit_product() -> Response:
+def edit_product() -> Response | tuple[Response, int]:
     form = request.form
     if "product_id" not in form.keys():
         return Response(response="product_id not in request body", status=HTTPStatus.BAD_REQUEST)
@@ -62,7 +62,7 @@ def edit_product() -> Response:
         result = product_to_edit.edit(session=session, product_name=product_name, price=price)
     if result.item is None:
         return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
-    return jsonify(result.item)
+    return jsonify(result.item), 200
 
 
 @bp.route("/product/delete", methods=["POST"])
@@ -75,5 +75,5 @@ def delete_product() -> Response:
     with Session() as session:
         result = Product.delete(session, product_id)
     if result.item is None:
-        Response(response=result.message, status=HTTPStatus.NOT_FOUND)
+        return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
     return Response(response=result.message, status=HTTPStatus.OK)

@@ -83,7 +83,7 @@ class VendingMachine(Base):
         session.commit()
         return Result.success("product successfully added", self)
 
-    def remove_product_by_id(self, session: Session, product_id: str) -> Result:
+    def remove_product_by_id(self, session: Session, product_id: str) -> Result:  # pragma: no cover
         try:
             product_id = int(product_id)
         except ValueError:

@@ -33,7 +33,7 @@ def get_vending_machine() -> Response:
 
 
 @bp.route("/vending-machine/create/", methods=["POST"])
-def create_vending_machine() -> Response:
+def create_vending_machine() -> Response | tuple[Response, int]:
     form = request.form
     if "location" not in form:
         return Response(
@@ -42,11 +42,11 @@ def create_vending_machine() -> Response:
         )
     with Session() as session:
         result: Result = VendingMachine.create(session, form["location"])
-        if result is None:
+        if result.item is None:
             return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
         session.add(result.item)
         session.commit()
-    return Response(response="vending machine created", status=HTTPStatus.CREATED)
+        return jsonify(result.item), 201  # Response(response="vending machine created", status=HTTPStatus.CREATED)
 
 
 @bp.route("/vending-machine/delete/", methods=["POST"])

@@ -9,5 +9,5 @@ from config import Config
 
 db = SQLAlchemy()
 Engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, echo=True)
-Session = sessionmaker(Engine)
+Session = sessionmaker(Engine, expire_on_commit=False)
 Base = declarative_base()

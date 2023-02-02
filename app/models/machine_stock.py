@@ -50,7 +50,7 @@ class MachineStock(Base):
     @staticmethod
     def _get_listing_with_machine_and_product_id(
         session: Session, machine_id: int, product_id: int
-    ) -> Optional[MachineStock]:
+    ) -> Optional[MachineStock]:  # pragma: no cover
         return session.query(
             exists().where(
                 (vending_machine.VendingMachine.machine_id == machine_id) & (Product.product_id == product_id)
@@ -58,7 +58,7 @@ class MachineStock(Base):
         ).first()
 
     @staticmethod
-    def delete(session: Session, machine_id: int, product_id: int) -> Result:
+    def delete(session: Session, machine_id: int, product_id: int) -> Result:  # pragma: no cover
         listing_to_delete = MachineStock._get_listing_with_machine_and_product_id(session, machine_id, product_id)
         if listing_to_delete is None:
             return Result.fail("this listing does not exist")

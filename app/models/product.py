@@ -41,7 +41,7 @@ class Product(Base):
 
     @staticmethod
     def get_product_by_name(session: Session, product_name: str) -> Optional[Product]:
-        return session.query(Product).filter(Product.product_id == product_name).first()
+        return session.query(Product).filter(Product.product_name == product_name).first()
 
     @staticmethod
     def get_all_products(session: Session) -> Optional[List[Product]]:
@@ -58,10 +58,9 @@ class Product(Base):
         try:
             price = float(price)
             if price < 0:
-                raise ValueError
+                return Result.fail(f"product cannot be made with invalid price: {price}")
         except ValueError:
             return Result.fail(f"product cannot be made with invalid price: {price}")
-
         return Result("product created", Product(product_name=product_name, price=price))
 
     @staticmethod
@@ -76,19 +75,21 @@ class Product(Base):
     def edit(self, session: Session, product_name: Optional[str], price: Optional[str]) -> Result:
         if product_name is None and price is None:
             return Result.fail("product_name and price were both None-type objects")
-        if Product.has_product_by_name(session, product_name):
-            return Result.fail("product name already exists")
         try:
             if price is not None:
                 price = float(price)
                 self.price = price
         except ValueError:
             return Result.fail("price was invalid")
-        if product_name is not None:
+        if product_name is None:
+            session.query(Product).filter(Product.product_id == self.product_id).update({"price": price})
+        elif price is None:
+            session.query(Product).filter(Product.product_id == self.product_id).update({"product_name": product_name})
+        else:
             self.product_name = product_name
-        session.query(Product).filter(Product.product_id == self.product_id).update(
-            {"product_name": self.product_name, "price": self.price}
-        )
+            session.query(Product).filter(Product.product_id == self.product_id).update(
+                {"product_name": product_name, "price": price}
+            )
         session.expunge(self)
         session.commit()
         return Result.success("product successfully edited", self)
