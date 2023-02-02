@@ -58,16 +58,6 @@ jobs:
   test-and-coverage:
     runs-on: ubuntu-20.04
 
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: vending_machines
-        ports:
-          - 33306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - uses: actions/checkout@v2
 
@@ -91,6 +81,11 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Create database
+        run: docker run -p ${{ secrets.DOCKER_PORT }} --name vending_machines -e
+          MYSQL_ROOT_PASSWORD=${{ secrets.PASSWORD }} -e MYSQL_DATABASE=${{ secrets.DATABASE }}
+          -d --restart=always mysql
 
       - name: Install dependencies
         #if: steps.poetry-cache.outputs.cache-hit != 'true'
