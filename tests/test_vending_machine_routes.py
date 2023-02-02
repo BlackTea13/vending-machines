@@ -98,6 +98,12 @@ def test_bad_add_product_to_machine(app: Flask, client: FlaskClient) -> None:
     )
     assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
 
+    response = client.post("/vending-machine/add-product/", data={"machine_id": 1})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+    response = client.post("/vending-machine/add-product/", data={"machine_id": 10, "product_id": 4, "quantity": 50})
+    assert int(response.status.split()[0]) == HTTPStatus.NOT_FOUND.numerator
+
 
 def test_edit_product_quantity(app: Flask, client: FlaskClient) -> None:
     response = client.post(
@@ -131,6 +137,15 @@ def test_bad_edit_product_quantity(app: Flask, client: FlaskClient) -> None:
     )
     assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
 
+    response = client.post("/vending-machine/edit-product/", data={"product_id": "hey", "quantity": -399999})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+    response = client.post("/vending-machine/edit-product/", data={"quantity": -399999})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+    response = client.post("/vending-machine/edit-product/", data={})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
 
 def test_delete_machine(app: Flask, client: FlaskClient) -> None:
     response = client.post("/vending-machine/delete/", data={"machine_id": "1"})
@@ -146,3 +161,6 @@ def test_bad_delete_machine(app: Flask, client: FlaskClient) -> None:
 
     response = client.get("/vending-machine/", query_string={"machine_id": "hello"})
     assert int(response.status.split()[0]) == HTTPStatus.NOT_FOUND.numerator
+
+    response = client.post("/vending-machine/delete/", data={})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator

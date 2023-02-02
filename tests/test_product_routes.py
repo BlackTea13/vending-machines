@@ -42,6 +42,13 @@ def test_bad_product_creation(app: Flask, client: FlaskClient, test_products: Di
     assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
 
 
+def test_bad_product_creation_2(app: Flask, client: FlaskClient) -> None:
+    response = client.post("/product/create", data={})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+    response = client.post("/product/create", data={"product_name": "hello"})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+
 def test_view_all(app: Flask, client: FlaskClient) -> None:
     response = client.get(
         "/product/all",
@@ -77,6 +84,11 @@ def test_bad_view_by_id(app: Flask, client: FlaskClient, test_strings: Dict) -> 
     assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
 
 
+def test_bad_view_2(app: Flask, client: FlaskClient) -> None:
+    response = client.get("/product/", query_string={"product_id": 5000, "price": 5000})
+    assert int(response.status.split()[0]) == HTTPStatus.NOT_FOUND.numerator
+
+
 @pytest.mark.parametrize(
     "products",
     [
@@ -109,6 +121,12 @@ def test_edit_product_by_single_key(app: Flask, client: FlaskClient) -> None:
 
 def test_bad_edit(app: Flask, client: FlaskClient):
     response = client.post("/product/edit", data={"product_id": 1, "price": "hello"})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+    response = client.post("/product/edit", data={"price": "hello"})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+    response = client.post("/product/edit", data={"product_id": 5000, "price": 5000})
     assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
 
 
