@@ -1,4 +1,4 @@
-# Vending Machine Tracker API 
+# Vending Machine Tracker API
 ### Project Structure
 
 ---
@@ -10,7 +10,7 @@
 │   ├── extensions.py
 │   ├── machine_stock
 │   ├── main
-│   │   └── routes.py           
+│   │   └── routes.py
 │   ├── models
 │   │   ├── machine_stock.py
 │   │   ├── product.py
@@ -26,7 +26,7 @@
 
 ---
 
-Make sure to have the required packages to run the program by doing 
+Make sure to have the required packages to run the program by doing
 ```
 pip install -r requirements.txt
 ```
@@ -46,8 +46,8 @@ schema called "vending_machines" if you want things to run smoothly.
 
 ---
 
-#### Vending Machine 
-View all vending machines 
+#### Vending Machine
+View all vending machines
 ```
 GET /vending-machine/all/
 ```
@@ -86,7 +86,3 @@ Delete a product with `product_id` in form
 ```
 POST /product/delete/
 ```
-
-
-
-

@@ -1,10 +1,13 @@
 from __future__ import annotations
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import relationship
+
+from typing import Dict, List, Optional
+
+from marshmallow_dataclass import dataclass
+from sqlalchemy import DECIMAL, Column, Integer, String, exists
+from sqlalchemy.orm import Session, relationship
+
 from app.extensions import Base
-from dataclasses import dataclass
-from app.models import machine_stock
-from typing import List
+from app.utils.result import Result
 
 
 @dataclass
@@ -13,29 +16,87 @@ class Product(Base):
     product_name: str
     price: float
 
-    __tablename__ = 'products'
+    __tablename__ = "products"
     product_id = Column(Integer, primary_key=True, autoincrement=True)
-    product_name = Column(String(1000))
-    price = Column(Float)
+    product_name = Column(String(100), unique=True, nullable=False)
+    price = Column(DECIMAL(precision=10, scale=2), nullable=False)
 
-    parents: machine_stock.MachineStock = relationship(
-        "MachineStock", back_populates="child", cascade="all,delete")
-
-    def __init__(self, product_name: str, price: float):
-        self.product_name = product_name
-        self.price = price
+    machines = relationship("MachineStock", back_populates="product_info", cascade="all,delete", lazy=True)
 
     @staticmethod
-    def get_product_by_id(id: int, products: List[Product]) -> Product | None:
-        for product in products:
-            if product.product_id == id:
-                return product
-        return None
+    def has_product_by_id(session: Session, product_id: int) -> bool:
+        return session.query(exists().where(Product.product_id == product_id)).scalar()
 
     @staticmethod
-    def object_to_dictionary(product: Product) -> dict:
+    def has_product_by_name(session: Session, product_name: str) -> bool:
+        return session.query(exists().where(Product.product_name == product_name)).scalar()
+
+    @staticmethod
+    def get_product_by_id(session: Session, product_id: str) -> Optional[Product]:
+        try:
+            product_id = int(product_id)
+        except ValueError:
+            return None
+        return session.query(Product).filter(Product.product_id == product_id).first()
+
+    @staticmethod
+    def get_product_by_name(session: Session, product_name: str) -> Optional[Product]:
+        return session.query(Product).filter(Product.product_name == product_name).first()
+
+    @staticmethod
+    def get_all_products(session: Session) -> Optional[List[Product]]:
+        return session.query(Product).all()
+
+    @staticmethod
+    def create(session: Session, product_name: str, price: str) -> Result:
+        if product_name is None:
+            return Result.fail("product_name cannot be None-type object")
+        if price is None:
+            return Result.fail("price cannot be None-type object")
+        if Product.has_product_by_name(session, product_name):
+            return Result.fail(f"product with name: {product_name} already exists")
+        try:
+            price = float(price)
+            if price < 0:
+                return Result.fail(f"product cannot be made with invalid price: {price}")
+        except ValueError:
+            return Result.fail(f"product cannot be made with invalid price: {price}")
+        return Result("product created", Product(product_name=product_name, price=price))
+
+    @staticmethod
+    def delete(session: Session, product_id: str) -> Result:
+        product_to_delete = Product.get_product_by_id(session, product_id)
+        if product_to_delete is None:
+            return Result.fail("product could not be found")
+        session.delete(product_to_delete)
+        session.commit()
+        return Result.success("product has been deleted", product_to_delete)
+
+    def edit(self, session: Session, product_name: Optional[str], price: Optional[str]) -> Result:
+        if product_name is None and price is None:
+            return Result.fail("product_name and price were both None-type objects")
+        try:
+            if price is not None:
+                price = float(price)
+                self.price = price
+        except ValueError:
+            return Result.fail("price was invalid")
+        if product_name is None:
+            session.query(Product).filter(Product.product_id == self.product_id).update({"price": price})
+        elif price is None:
+            session.query(Product).filter(Product.product_id == self.product_id).update({"product_name": product_name})
+        else:
+            self.product_name = product_name
+            session.query(Product).filter(Product.product_id == self.product_id).update(
+                {"product_name": product_name, "price": price}
+            )
+        session.expunge(self)
+        session.commit()
+        return Result.success("product successfully edited", self)
+
+    def to_dict(self) -> Dict:
         return {
-            'product_id': product.product_id,
-            'product_name': product.product_name,
-            'price': product.price
+            "product_id": self.product_id,
+            "product_name": self.product_name,
+            "price": self.price,
         }
