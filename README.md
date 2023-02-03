@@ -30,21 +30,20 @@
 
 ---
 
-Make sure to have the required packages to run the program by doing
+Make sure poetry is installed on your machine. After, run this command in the project directory.
 ```
-pip install -r requirements.txt
+poetry install
 ```
-
-The project was written in python 3.10 in case any unexpected bugs pop up.
 
 
 ### Database Connection
 
 ---
 
-Waiting to learn to put database in docker using docker compose... <br>
-For now you should have a MySQL server on your local machine on port 3306 with a
-schema called "vending_machines" if you want things to run smoothly.
+Make sure you have docker installed and run
+```angular2html
+docker compose up -d
+```
 
 ### API Sheet
 
