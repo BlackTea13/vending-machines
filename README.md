@@ -1,3 +1,7 @@
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=BlackTea13_vending-machines&metric=coverage)](https://sonarcloud.io/summary/new_code?id=BlackTea13_vending-machines)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=BlackTea13_vending-machines&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=BlackTea13_vending-machines)
+
+
 # Vending Machine Tracker API
 ### Project Structure
 
