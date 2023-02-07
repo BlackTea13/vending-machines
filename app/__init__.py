@@ -5,6 +5,7 @@ from flask import Flask
 from app.extensions import Base, Engine, Session, db
 from app.models.machine_stock import MachineStock
 from app.models.product import Product
+from app.models.stock_timeline import StockTimeline  # noqa: F401
 from app.models.vending_machine import VendingMachine
 from config import Config
 
