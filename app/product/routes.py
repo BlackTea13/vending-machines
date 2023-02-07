@@ -4,8 +4,8 @@ from typing import Tuple
 from flask import Response, jsonify, request
 
 from app.extensions import Session
-from app.models.product import Product
 from app.models import stock_timeline
+from app.models.product import Product
 from app.product import bp
 
 
