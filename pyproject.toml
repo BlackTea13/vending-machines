@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["BlackTea13 <robertblum2001@gmail.com>"]
 readme = "README.md"
-packages = [{include = "vending_machines"}]
 
 [tool.poetry.dependencies]
 pre-commit = "^3.0.1"
