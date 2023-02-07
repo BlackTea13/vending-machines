@@ -4,6 +4,7 @@ from typing import Union
 from flask import Response, jsonify, redirect, request
 
 from app.extensions import Session
+from app.models.stock_timeline import StockTimeline
 from app.models.vending_machine import VendingMachine
 from app.utils.result import Result
 from app.vending_machine import bp
@@ -83,6 +84,7 @@ def add_product_to_machine() -> Response:
         result = machine.add_product_by_id(session, product_id, quantity)
     if result.item is None:
         return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    StockTimeline.save_state(session, int(machine_id), int(product_id))
     return Response(response=result.message, status=HTTPStatus.OK)
 
 
@@ -106,4 +108,5 @@ def edit_product_quantity_in_machine() -> Response:
         result = machine.increase_product_quantity_by_id(session, product_id, quantity)
     if result.item is None:
         return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    StockTimeline.save_state(session, int(machine_id), int(product_id))
     return Response(response=result.message, status=HTTPStatus.OK)

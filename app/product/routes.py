@@ -5,6 +5,7 @@ from flask import Response, jsonify, request
 
 from app.extensions import Session
 from app.models.product import Product
+from app.models import stock_timeline
 from app.product import bp
 
 
@@ -77,3 +78,14 @@ def delete_product() -> Response:
     if result.item is None:
         return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
     return Response(response=result.message, status=HTTPStatus.OK)
+
+
+@bp.route("/product/records", methods=["POST"])
+def product_record() -> Response:
+    form = request.form
+    if "product_id" not in form.keys():
+        return Response(response="product_id not in request body", status=HTTPStatus.BAD_REQUEST)
+    product_id = form.get("product_id")
+
+    result = stock_timeline.StockTimeline.product_time_stamp_in_records(product_id)
+    return jsonify(result)
