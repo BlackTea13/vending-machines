@@ -17,14 +17,14 @@ class StockTimeline(Base):
     machine_id: int
     product_id: int
     product_quantity: int
-    state: JSON
+    stock_state: JSON
 
     __tablename__ = "stock_timeline"
     time = Column(DateTime, primary_key=True, default=datetime.now())
     machine_id = Column(Integer, ForeignKey("vending_machines.machine_id"), primary_key=True)
     product_id = Column(Integer, ForeignKey("products.product_id"))
     product_quantity = Column(Integer)
-    state = Column(JSON)
+    stock_state = Column(JSON)
 
     @staticmethod
     def save_state(session: Session, machine_id: int, product_id: int) -> Result:
@@ -54,7 +54,11 @@ class StockTimeline(Base):
 
             print("HJiudhsafiuahoighareuubioahgoiuaehgiourhIOUGHARIUORGH=-====================")
             column = StockTimeline(
-                time=date, machine_id=machine_id, product_id=product_id, product_quantity=stock.quantity, state=state
+                time=date,
+                machine_id=machine_id,
+                product_id=product_id,
+                product_quantity=stock.quantity,
+                stock_state=state,
             )
             session.add(column)
             session.commit()

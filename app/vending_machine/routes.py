@@ -110,3 +110,14 @@ def edit_product_quantity_in_machine() -> Response:
         return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
     StockTimeline.save_state(session, int(machine_id), int(product_id))
     return Response(response=result.message, status=HTTPStatus.OK)
+
+
+@bp.route("/vending-machine/records", methods=["POST"])
+def product_record() -> Response:
+    form = request.form
+    if "machine_id" not in form.keys():
+        return Response(response="product_id not in request body", status=HTTPStatus.BAD_REQUEST)
+    machine_id = form.get("machine_id")
+
+    result = StockTimeline.machine_time_stamp_in_records(machine_id)
+    return jsonify(result)
