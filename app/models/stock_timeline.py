@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List, Optional
 
+from flask import jsonify
 from marshmallow_dataclass import dataclass
 from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer
 
@@ -58,7 +59,7 @@ class StockTimeline(Base):
                 machine_id=machine_id,
                 product_id=product_id,
                 product_quantity=stock.quantity,
-                stock_state=state,
+                stock_state=jsonify(state).json,
             )
             session.add(column)
             session.commit()

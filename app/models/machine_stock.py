@@ -35,7 +35,7 @@ class MachineStock(Base):
         return {
             "product_id": self.product_id,
             "product_name": self.product_info.product_name,
-            "product_price": str(self.product_info.price),
+            "product_price": self.product_info.price,
             "quantity": self.quantity,
         }
 
