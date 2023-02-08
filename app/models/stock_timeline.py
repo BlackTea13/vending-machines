@@ -4,10 +4,10 @@ from datetime import datetime
 from typing import List, Optional
 
 from marshmallow_dataclass import dataclass
-from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer
 
 from app.extensions import Base, Session
-from app.models import machine_stock
+from app.models import machine_stock, vending_machine
 from app.utils.result import Result
 
 
@@ -17,12 +17,14 @@ class StockTimeline(Base):
     machine_id: int
     product_id: int
     product_quantity: int
+    state: JSON
 
     __tablename__ = "stock_timeline"
     time = Column(DateTime, primary_key=True, default=datetime.now())
     machine_id = Column(Integer, ForeignKey("vending_machines.machine_id"), primary_key=True)
     product_id = Column(Integer, ForeignKey("products.product_id"))
     product_quantity = Column(Integer)
+    state = Column(JSON)
 
     @staticmethod
     def save_state(session: Session, machine_id: int, product_id: int) -> Result:
@@ -46,8 +48,13 @@ class StockTimeline(Base):
             if stock.quantity < 0:
                 return Result.fail("quantity cannot be lower than 1")
 
+            products = vending_machine.VendingMachine.get_vending_machine_by_id(session, str(machine_id))
+            state = [i.to_dict() for i in products.products]
+            print(state)
+
+            print("HJiudhsafiuahoighareuubioahgoiuaehgiourhIOUGHARIUORGH=-====================")
             column = StockTimeline(
-                time=date, machine_id=machine_id, product_id=product_id, product_quantity=stock.quantity
+                time=date, machine_id=machine_id, product_id=product_id, product_quantity=stock.quantity, state=state
             )
             session.add(column)
             session.commit()
