@@ -51,9 +51,7 @@ class StockTimeline(Base):
 
             products = vending_machine.VendingMachine.get_vending_machine_by_id(session, str(machine_id))
             state = [i.to_dict() for i in products.products]
-            print(state)
 
-            print("HJiudhsafiuahoighareuubioahgoiuaehgiourhIOUGHARIUORGH=-====================")
             column = StockTimeline(
                 time=date,
                 machine_id=machine_id,
