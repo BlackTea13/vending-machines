@@ -164,3 +164,14 @@ def test_bad_delete_machine(app: Flask, client: FlaskClient) -> None:
 
     response = client.post("/vending-machine/delete/", data={})
     assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+
+def test_machine_record(app: Flask, client: FlaskClient) -> None:
+    response = client.post("/vending-machine/records", data={"machine_id": 1})
+    assert response.status_code == 200
+    assert type(response.json) == list
+
+
+def test_bad_machine_record(app: Flask, client: FlaskClient) -> None:
+    response = client.post("/vending-machine/records", data={})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator

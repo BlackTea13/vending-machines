@@ -113,7 +113,7 @@ def edit_product_quantity_in_machine() -> Response:
 
 
 @bp.route("/vending-machine/records", methods=["POST"])
-def product_record() -> Response:
+def machine_record() -> Response:
     form = request.form
     if "machine_id" not in form.keys():
         return Response(response="product_id not in request body", status=HTTPStatus.BAD_REQUEST)
