@@ -89,3 +89,5 @@ Delete a product with `product_id` in form
 ```
 POST /product/delete/
 ```
+
+**By Robert Emil Rachanat Blum**
