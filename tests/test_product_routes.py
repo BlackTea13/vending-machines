@@ -146,3 +146,14 @@ def test_bad_delete_product(app: Flask, client: FlaskClient) -> None:
 
     response = client.post("/product/delete", data={"product_id": "hye"})
     assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator
+
+
+def test_product_record(app: Flask, client: FlaskClient) -> None:
+    response = client.post("/product/records", data={"product_id": 2})
+    assert response.status_code == 200
+    assert type(response.json) == list
+
+
+def test_bad_product_record(app: Flask, client: FlaskClient) -> None:
+    response = client.post("/product/records", data={})
+    assert int(response.status.split()[0]) == HTTPStatus.BAD_REQUEST.numerator

@@ -2,3 +2,5 @@ __pycache__
 .prettierignore
 .idea
 poetry.lock
+.coverage
+coverage.xml

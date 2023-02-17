@@ -26,6 +26,7 @@ repos:
     rev: 22.6.0
     hooks:
     -   id: black
+        args: [--line-length=120]
     # https://github.com/psf/black/issues/438#issuecomment-522114098
         exclude: ^.+\/migrations\/.+
 

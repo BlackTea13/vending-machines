@@ -4,6 +4,7 @@ from typing import Union
 from flask import Response, jsonify, redirect, request
 
 from app.extensions import Session
+from app.models.stock_timeline import StockTimeline
 from app.models.vending_machine import VendingMachine
 from app.utils.result import Result
 from app.vending_machine import bp
@@ -83,6 +84,7 @@ def add_product_to_machine() -> Response:
         result = machine.add_product_by_id(session, product_id, quantity)
     if result.item is None:
         return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    StockTimeline.save_state(session, int(machine_id), int(product_id))
     return Response(response=result.message, status=HTTPStatus.OK)
 
 
@@ -106,4 +108,16 @@ def edit_product_quantity_in_machine() -> Response:
         result = machine.increase_product_quantity_by_id(session, product_id, quantity)
     if result.item is None:
         return Response(response=result.message, status=HTTPStatus.BAD_REQUEST)
+    StockTimeline.save_state(session, int(machine_id), int(product_id))
     return Response(response=result.message, status=HTTPStatus.OK)
+
+
+@bp.route("/vending-machine/records", methods=["POST"])
+def machine_record() -> Response:
+    form = request.form
+    if "machine_id" not in form.keys():
+        return Response(response="product_id not in request body", status=HTTPStatus.BAD_REQUEST)
+    machine_id = form.get("machine_id")
+
+    result = StockTimeline.machine_time_stamp_in_records(machine_id)
+    return jsonify(result)
