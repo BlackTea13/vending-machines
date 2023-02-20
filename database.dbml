@@ -1,0 +1,24 @@
+Table vending_machines {
+  machine_id int [pk, increment]
+  location varchar
+}
+
+Table products {
+  product_id int
+  product_name varchar
+  price float
+}
+
+Table machine_stock {
+  machine_id int [ref: > vending_machines.machine_id]
+  product_id int [ref: > products.product_id]
+  quantity int
+}
+
+Table stock_timeline {
+  machine_id int [ref: > vending_machines.machine_id]
+  product_id int [ref: > products.product_id]
+  product_quantity int
+  time datetime
+  stock_state JSON
+}

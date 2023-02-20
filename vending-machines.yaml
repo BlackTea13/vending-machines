@@ -1,0 +1,243 @@
+openapi: "3.0.2"
+info:
+  title: Vending Machines API
+  version: "1.0"
+  description: |-
+    This is a vending machine API server that can handle basic requests.
+
+tags:
+  - name: vending-machine
+    description: everything about vending machines
+  - name: product
+    description: everything about the products put into vending machines
+  - name: stock-records
+    description: everything about the records of vending machines
+paths:
+  /vending-machine:
+    get:
+      tags:
+        - vending-machine
+      summary: get vending machine
+      description: get a JSON of vending machine properties
+      parameters:
+        - name: machine_id
+          in: query
+          description: the id of the vending machine
+          required: true
+          schema:
+            type: string
+        - name: location
+          in: query
+          description: the location of the vending machine
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vending-Machine'
+        '400':
+          description: bad request
+        '403':
+          description: vending_machine not found
+  /vending-machine/all:
+    get:
+      tags:
+        - vending-machine
+      summary: get all vending machines
+      description: get list of JSON objects of all vending machines
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vending-Machine'
+  /vending-machine/create:
+    post:
+      tags:
+        - vending-machine
+      summary: create a vending machine
+      description: creates a new vending machine to be stored in database
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vending-Machine'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request, probably missing something in request
+  /vending-machine/delete:
+    post:
+      tags:
+        - vending-machine
+      summary: deletes a vending machine
+      description: deletes a vending machine stored in the database
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                machine_id:
+                  type: integer
+                  example: 50
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '403':
+          description: Not found
+  /vending-machine/add-product:
+    post:
+      tags:
+        - vending-machine
+      summary: adds a product to a machine
+      description: |-
+        adds a product by product id to a machine by its machine id by a
+        specified amount
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                machine_id:
+                  type: integer
+                  example: 2
+                product_id:
+                  type: integer
+                  example: 5
+                quantity:
+                  type: integer
+                  example: 50
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '403':
+          description: Something was not found
+  /vending-machine/edit-product:
+    post:
+      tags:
+        - vending-machine
+      summary: edit product quantity
+      description: edits a product's quantity within a vending machine
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                machine_id:
+                  type: integer
+                  example: 2
+                product_id:
+                  type: integer
+                  example: 5
+                quantity:
+                  type: integer
+                  example: 50
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '403':
+          description: Something was not found
+  /vending-machine/records:
+    post:
+      tags:
+        - vending-machine
+      summary: view records
+      description: look at all the states of the current vending machine
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                machine_id:
+                  type: integer
+                  example: 5
+        required: true
+      responses:
+        '200':
+          description: successful operation
+components:
+  schemas:
+    Vending-Machine:
+      type: object
+      properties:
+        machine_id:
+          type: integer
+          example: 13
+        location:
+          type: string
+          example: "front of house"
+        products:
+          type: array
+          xml:
+            name: products
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Product-In-Machine'
+    Product:
+      type: object
+      properties:
+        product_id:
+          type: integer
+          example: 5
+        product_name:
+          type: string
+          example: "pepsi"
+    Stock-Timeline:
+      type: object
+      properties:
+        machine_id:
+          type: integer
+          example: 13
+        product_id:
+          type: integer
+          example: 5
+        product_quantity:
+          type: integer
+          example: 500
+        stock_state:
+          type: json
+          description: json storing products in the machine at that snapshot
+    Machine-Stock:
+      type: object
+      properties:
+        machine_id:
+          type: integer
+          example: 13
+        product_id:
+          type: integer
+          example: 5
+        quantity:
+          type: integer
+          example: 250
+    Product-In-Machine:
+      type: object
+      properties:
+        product_name:
+          type: string
+          example: "pepsi"
+        price:
+          type: number
+          example: 20.00
+        quantity:
+          type: integer
+          example: 20

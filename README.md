@@ -41,7 +41,7 @@ poetry install
 ---
 
 Make sure you have docker installed and run
-```angular2html
+```
 docker compose up -d
 ```
 
@@ -89,5 +89,8 @@ Delete a product with `product_id` in form
 ```
 POST /product/delete/
 ```
+
+### Database ER
+![database e-r diagram](database.png)
 
 **By Robert Emil Rachanat Blum**
