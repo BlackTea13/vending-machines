@@ -10,8 +10,6 @@ tags:
     description: everything about vending machines
   - name: product
     description: everything about the products put into vending machines
-  - name: stock-records
-    description: everything about the records of vending machines
 paths:
   /vending-machine:
     get:
@@ -175,6 +173,133 @@ paths:
       responses:
         '200':
           description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stock-Timeline'
+  /product:
+    get:
+      tags:
+        - product
+      summary: view a product
+      description: view a product by id
+      parameters:
+        - name: product_id
+          in: query
+          description: the product id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '403':
+          description: not found
+  /product/all:
+    get:
+      tags:
+        - product
+      summary: view all products
+      description: view all product names and their prices
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /product/create:
+    post:
+      tags:
+        - product
+      summary: create a product
+      description: create a product with a given name and price
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                product_name:
+                  type: string
+                  example: 'ichitan'
+                price:
+                  type: number
+                  example: 20.00
+        required: true
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: bad request
+  /product/edit:
+    post:
+      tags:
+        - product
+      summary: edit a product
+      description: edit a product's name or price by id
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        '200':
+           description: successful operation
+        '400':
+          description: bad request
+        '403':
+          description: product not found
+  /product/delete:
+    post:
+      tags:
+        - product
+      summary: delete a product
+      description: deletes a product with the specified id
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                product_id:
+                  type: integer
+                  example: 4
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: bad request
+        '403':
+          description: not found
+  /product/records:
+    post:
+      tags:
+        - product
+      summary: get product records
+      description: get all the records of a certain product by product id
+      requestBody:
+        content:
+          application/x-www-form-url-encoded:
+            schema:
+              properties:
+                product_id:
+                  type: integer
+                  example: 4
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stock-Timeline'
+        '400':
+          description: bad request
+        '403':
+          description: not found
 components:
   schemas:
     Vending-Machine:
@@ -214,9 +339,6 @@ components:
         product_quantity:
           type: integer
           example: 500
-        stock_state:
-          type: json
-          description: json storing products in the machine at that snapshot
     Machine-Stock:
       type: object
       properties:
